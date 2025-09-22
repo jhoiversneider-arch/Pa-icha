@@ -8,87 +8,67 @@
       margin: 0;
       background-color: black;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
-      overflow: hidden;
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
     }
     h1 {
-      font-size: 28px;
-      margin: 15px;
+      font-size: 32px;
+      margin: 20px;
       color: yellow;
       text-shadow: 0 0 10px orange, 0 0 20px red;
-      z-index: 2;
-      position: relative;
-    }
-    canvas {
-      flex: 1;
     }
   </style>
 </head>
 <body>
   <h1>🌼 Toma Ichabella vos no vas a ser espectadora 🌼</h1>
-  <canvas id="lienzo"></canvas>
+  <canvas id="lienzo" width="500" height="500"></canvas>
 
   <script>
     const canvas = document.getElementById("lienzo");
     const ctx = canvas.getContext("2d");
 
-    // Ajustar tamaño del canvas
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight - 60;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
     // Crear estrellas
-    const estrellas = Array.from({ length: 80 }, () => ({
+    const estrellas = Array.from({ length: 40 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 1,
-      brillo: Math.random()
+      r: Math.random() * 2 + 1
     }));
 
     function dibujarEstrellas() {
-      estrellas.forEach(e => {
-        e.brillo += (Math.random() - 0.5) * 0.1;
-        if (e.brillo < 0.2) e.brillo = 0.2;
-        if (e.brillo > 1) e.brillo = 1;
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      ctx.fillStyle = "white";
+      estrellas.forEach(e => {
         ctx.beginPath();
         ctx.arc(e.x, e.y, e.r, 0, 2 * Math.PI);
-        ctx.fillStyle = rgba(255, 255, 200, ${e.brillo});
         ctx.fill();
       });
     }
 
-    function dibujarFlor(x, y, t) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(t * 0.02);
-
+    function dibujarFlor(x, y) {
       // tallo
       ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, 100);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + 80);
       ctx.strokeStyle = "green";
       ctx.lineWidth = 6;
       ctx.stroke();
 
-      // pétalos brillantes
-      const brillo = 0.7 + 0.3 * Math.sin(t * 0.05);
+      // pétalos
       for (let i = 0; i < 6; i++) {
         const angle = (i * Math.PI) / 3;
-        const px = Math.cos(angle) * 50;
-        const py = Math.sin(angle) * 50;
+        const px = x + Math.cos(angle) * 40;
+        const py = y + Math.sin(angle) * 40;
 
         ctx.beginPath();
-        ctx.arc(px, py, 25, 0, 2 * Math.PI);
-        ctx.fillStyle = rgba(255, 255, 0, ${brillo});
+        ctx.arc(px, py, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "yellow";
         ctx.fill();
         ctx.strokeStyle = "orange";
         ctx.stroke();
@@ -96,28 +76,17 @@
 
       // centro
       ctx.beginPath();
-      ctx.arc(0, 0, 25, 0, 2 * Math.PI);
+      ctx.arc(x, y, 20, 0, 2 * Math.PI);
       ctx.fillStyle = "orange";
       ctx.fill();
-
-      ctx.restore();
     }
 
-    let tiempo = 0;
-    function animar() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // fondo estrellado
+    function dibujar() {
       dibujarEstrellas();
-
-      // flor animada en el centro
-      dibujarFlor(canvas.width / 2, canvas.height / 2, tiempo);
-
-      tiempo++;
-      requestAnimationFrame(animar);
+      dibujarFlor(250, 250);
     }
 
-    animar();
+    dibujar();
   </script>
 </body>
 </html>
